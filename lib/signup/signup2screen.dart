@@ -249,6 +249,12 @@ class _SignUpScreen2State extends State<SignUpScreen2> {
                     children: [
                       TextButton(
                         onPressed: () {
+                          widget.data.businessName = businessController.text;
+                          widget.data.informalName = informalController.text;
+                          widget.data.address = addressController.text;
+                          widget.data.city = cityController.text;
+                          widget.data.zipcode = zipController.text;
+
                           Navigator.pop(context);
                         },
                         child: const Icon(Icons.arrow_back),

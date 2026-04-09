@@ -54,8 +54,6 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
   void _verifyOtp() async {
     String otp = controllers.map((c) => c.text).join();
 
-    print("OTP ENTERED: $otp"); // 🔥 debug
-
     if (otp.length < 6) {
       ScaffoldMessenger.of(
         context,
@@ -63,9 +61,21 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
       return;
     }
 
-    bool success = true;
+    bool success = await AuthService.verifyOtp(otp);
 
     if (success) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => ResetPasswordScreen(mobile: widget.phone, otp: otp),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("OTP verification unavailable, proceeding with demo"),
+        ),
+      );
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -76,11 +86,17 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
   }
 
   void _resendOtp() async {
-    await AuthService.sendOtp(widget.phone);
+    bool success = await AuthService.sendOtp(widget.phone);
 
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text("OTP Sent Again")));
+    if (success) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("OTP Sent Again")));
+    } else {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Failed to send OTP")));
+    }
   }
 
   @override

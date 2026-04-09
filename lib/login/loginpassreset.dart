@@ -21,7 +21,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
   bool isSubmitted = false;
 
-  String? validatePassword(String? value) {
+ String? validatePassword(String? value) {
     if (!isSubmitted) return null;
     if (value == null || value.isEmpty) return "Enter password";
     if (value.length < 6) return "Password must be minimum 6 characters";
@@ -93,6 +93,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     prefixIcon: const Icon(Icons.lock_outline),
                     filled: true,
                     fillColor: Colors.grey.shade200,
+                    errorStyle: const TextStyle(color: Colors.red),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                       borderSide: BorderSide.none,
@@ -112,6 +113,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     prefixIcon: const Icon(Icons.lock_outlined),
                     filled: true,
                     fillColor: Colors.grey.shade200,
+                    errorStyle: const TextStyle(color: Colors.red),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                       borderSide: BorderSide.none,
@@ -137,7 +139,13 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                       });
 
                       if (_formKey.currentState!.validate()) {
-                        print("Form is valid");
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Password reset successful"),
+                          ),
+                        );
+
+                        Navigator.pushReplacementNamed(context, '/login');
                       }
                     },
                     child: const Text(

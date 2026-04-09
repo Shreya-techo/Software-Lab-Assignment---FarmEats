@@ -18,15 +18,21 @@ class AuthService {
       }),
     );
 
-    print("LOGIN STATUS: ${response.statusCode}");
     print("LOGIN BODY: ${response.body}");
 
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      final data = jsonDecode(response.body);
+    final data = jsonDecode(response.body);
+
+    if (data["success"] == true || data["success"] == "true") {
       return data["token"];
-    } else {
-      return null;
     }
+
+    if (data["message"] != null &&
+        data["message"].toString().toLowerCase().contains("success")) {
+      return data["token"];
+    }
+
+    print("LOGIN ERROR: ${data["message"]}");
+    return null;
   }
 
   static Future<bool> register({
@@ -57,15 +63,18 @@ class AuthService {
     request.fields['address'] = address;
     request.fields['city'] = city;
     request.fields['state'] = "Delhi";
-    request.fields['zip_code'] = "110001";
+    request.fields['zip_code'] = zipcode;
 
     request.fields['business_hours'] = jsonEncode(businessHours);
 
     var response = await request.send();
 
-    print("REGISTER STATUS: ${response.statusCode}");
+    var responseData = await http.Response.fromStream(response);
+    final data = jsonDecode(responseData.body);
 
-    return response.statusCode == 200 || response.statusCode == 201;
+    print("REGISTER BODY: ${responseData.body}");
+
+    return data["success"] == true || data["success"] == "true";
   }
 
   static Future<bool> sendOtp(String phone) async {
@@ -77,10 +86,11 @@ class AuthService {
       body: jsonEncode({"mobile": phone}),
     );
 
-    print("SEND OTP STATUS: ${response.statusCode}");
+    final data = jsonDecode(response.body);
+
     print("SEND OTP BODY: ${response.body}");
 
-    return response.statusCode == 200;
+    return data["success"] == true || data["success"] == "true";
   }
 
   static Future<bool> verifyOtp(String otp) async {
@@ -92,10 +102,11 @@ class AuthService {
       body: jsonEncode({"otp": otp}),
     );
 
-    print("VERIFY OTP STATUS: ${response.statusCode}");
+    final data = jsonDecode(response.body);
+
     print("VERIFY OTP BODY: ${response.body}");
 
-    return response.statusCode == 200;
+    return data["success"] == true || data["success"] == "true";
   }
 
   static Future<bool> resetPassword(
@@ -111,9 +122,10 @@ class AuthService {
       body: jsonEncode({"mobile": phone, "otp": otp, "password": password}),
     );
 
-    print("RESET PASSWORD STATUS: ${response.statusCode}");
+    final data = jsonDecode(response.body);
+
     print("RESET PASSWORD BODY: ${response.body}");
 
-    return response.statusCode == 200;
+    return data["success"] == true || data["success"] == "true";
   }
 }

@@ -11,6 +11,7 @@ class ForgotPasswordScreen extends StatefulWidget {
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final phoneController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,6 +60,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
               TextField(
                 controller: phoneController,
+                keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                   hintText: "Phone Number",
                   prefixIcon: const Icon(Icons.phone),
@@ -85,13 +87,37 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   ),
 
                   onPressed: () async {
-                    String phone = phoneController.text;
+                    String phone = phoneController.text.trim();
 
                     if (phone.isEmpty) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text("Enter phone number")),
                       );
                       return;
+                    }
+
+                    String digitsOnly = phone.replaceAll("+", "");
+                    if (!RegExp(r'^[0-9]+$').hasMatch(digitsOnly)) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("Enter valid phone number"),
+                        ),
+                      );
+                      return;
+                    }
+
+                    // 🔥 VALIDATION 3: Length check
+                    if (digitsOnly.length != 10) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("Phone number must be 10 digits"),
+                        ),
+                      );
+                      return;
+                    }
+
+                    if (!phone.startsWith("+")) {
+                      phone = "+1$phone";
                     }
 
                     bool success = await AuthService.sendOtp(phone);
@@ -105,7 +131,18 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       );
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("Failed to send OTP")),
+                        const SnackBar(
+                          content: Text(
+                            "OTP service unavailable, proceeding with demo",
+                          ),
+                        ),
+                      );
+
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => VerifyOtpScreen(phone: phone),
+                        ),
                       );
                     }
                   },

@@ -114,7 +114,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       hintText: "Password",
                       prefixIcon: const Icon(Icons.lock_outline),
 
-                      // ✅ Replace suffixText with this
                       suffixIcon: GestureDetector(
                         onTap: () {
                           Navigator.push(
@@ -165,16 +164,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         );
 
                         if (token != null) {
-                          print("Login success: $token");
-
                           Navigator.pushReplacementNamed(context, '/home');
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text("Login failed.Using demo access"),
-                            ),
+                            const SnackBar(content: Text("Login failed")),
                           );
-                          Navigator.pushReplacementNamed(context, '/home');
                         }
                       }
                     },

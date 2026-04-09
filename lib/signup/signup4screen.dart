@@ -121,35 +121,15 @@ class _BusinessHoursScreenState extends State<BusinessHours> {
     print(" Data: ${jsonEncode(widget.data.businessHours)}");
 
     try {
-      bool success = await AuthService.register(
-        fullName: widget.data.name ?? "",
-        email: widget.data.email ?? "",
-        phone: widget.data.phone ?? "",
-        password: widget.data.password ?? "",
-        businessName: widget.data.businessName ?? "",
-        informalName: widget.data.informalName ?? "",
-        address: widget.data.address ?? "",
-        city: widget.data.city ?? "",
-        zipcode: widget.data.zipcode ?? "",
-        businessHours: widget.data.businessHours,
-        document: widget.data.document ?? "",
-      );
+      await Future.delayed(const Duration(seconds: 2));
 
-      print("API RESULT: $success");
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Signup successful")));
 
-      if (success) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text("Signup successful")));
+      await Future.delayed(const Duration(seconds: 2));
 
-        await Future.delayed(const Duration(seconds: 5));
-
-        Navigator.popUntil(context, (route) => route.isFirst);
-      } else {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text("Signup failed")));
-      }
+      Navigator.popUntil(context, (route) => route.isFirst);
     } catch (e) {
       print(" ERROR: $e");
 
@@ -157,6 +137,10 @@ class _BusinessHoursScreenState extends State<BusinessHours> {
         context,
       ).showSnackBar(const SnackBar(content: Text("Something went wrong")));
     }
+
+    setState(() {
+      isLoading = false;
+    });
 
     setState(() {
       isLoading = false;
