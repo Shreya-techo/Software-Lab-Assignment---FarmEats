@@ -272,25 +272,45 @@ class _SignUpScreen1State extends State<SignUpScreen1> {
     );
   }
 
-  Widget socialButton(String imagePath) {
-    return Container(
+ Widget socialButton(String imagePath) {
+  return GestureDetector(
+    onTap: () {
+      String platform = "";
+
+      if (imagePath.contains("google")) {
+        platform = "Google";
+      } else if (imagePath.contains("apple")) {
+        platform = "Apple";
+      } else if (imagePath.contains("facebook")) {
+        platform = "Facebook";
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Logged in with $platform")),
+      );
+
+      Navigator.pushReplacementNamed(context, '/home');
+    },
+    child: Container(
       height: 45,
       width: 80,
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade300),
+        color: Colors.white, 
         borderRadius: BorderRadius.circular(25),
+        border: Border.all(color: Colors.grey.shade300),
       ),
-      child: TextButton(
-        onPressed: () {},
-        child: Center(
+      child: Center(
+        child: SizedBox(
+          height: 30,
+          width:24,
           child: Image.asset(
             imagePath,
-            height: 50,
-            width: 40,
+           // height: 25, 
             fit: BoxFit.contain,
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }
